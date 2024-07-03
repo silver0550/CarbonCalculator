@@ -23,6 +23,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
+ *
+ * @property-read float $energyConsumption
  */
 class Vehicle extends Model
 {
@@ -47,11 +49,12 @@ class Vehicle extends Model
         return $this->hasMany(Project::class);
     }
 
-    public function getEnergyConsumptionAttribute(): int
+    public function getEnergyConsumptionAttribute(): float
     {
         return $this->wltp_energy_consumption
-            ?? $this->nedc_energy_consumption
-            ?? self::EC_DEFAULT;
-
+            ? convertWhPerKmToKWhPer100Km($this->wltp_energy_consumption)
+            : $this->nedc_energy_consumption ?? convertWhPerKmToKWhPer100Km(self::EC_DEFAULT);
     }
+
+
 }

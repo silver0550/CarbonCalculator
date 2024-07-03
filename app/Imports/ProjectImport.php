@@ -17,6 +17,7 @@ class ProjectImport implements ToModel, WithHeadingRow
      */
     public function model(array $row): ?Project
     {
+
         $existingProject = Project::query()
             ->where('licence_plate', $row['license_plate'])
             ->first();
@@ -31,8 +32,8 @@ class ProjectImport implements ToModel, WithHeadingRow
             'id' => $row['prj_id'],
             'licence_plate' => $row['license_plate'],
             'vehicle_id' => $row['v_id'],
-            'start_date' => Carbon::parse($row['start_date']),
-            'end_date' => Carbon::parse($row['end_date']),
+            'start_date' => Carbon::createFromDate(1900, 1, 1)->addDays($row['start_date'] - 2),
+            'end_date' => Carbon::createFromDate(1900, 1, 1)->addDays($row['end_date'] - 2),
             'start_odometer' => $row['start_odo'],
             'end_odometer' => $row['last_odo'],
         ]);
