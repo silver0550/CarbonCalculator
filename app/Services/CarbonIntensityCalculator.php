@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Contracts\CalculableInterface;
 use App\Models\Project;
 use App\Repositories\CarbonIntensityRepository;
+use App\Repositories\ProjectRepository;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
@@ -17,26 +18,40 @@ class CarbonIntensityCalculator implements CalculableInterface
 
     public function __construct(
         private readonly Project $project,
-        private readonly CarbonIntensityRepository $carbonIntensityRepository)
+        private readonly CarbonIntensityRepository $carbonIntensityRepository,
+        private readonly ProjectRepository $projectRepository,
+    )
     {
-        $this->distanceTravelled = $this->project->distanceTravelled;
-        $this->energyConsumption = $this->project->vehicle->energyConsumption;
-        $this->carbonIntensity = $this->carbonIntensityRepository
-            ->getCarbonIntensityByYear(Carbon::parse($this->project->end_date)->year);
-
-        $this->totalConsumption = $this->calculateTotalConsumption();
+        if(is_null($this->project->carbon_intensity)){
+            $this->distanceTravelled = $this->project->distanceTravelled;
+            $this->energyConsumption = $this->project->vehicle->energyConsumption;
+            $this->carbonIntensity = $this->carbonIntensityRepository
+                ->getCarbonIntensityByYear(Carbon::parse($this->project->end_date)->year);
+            $this->totalConsumption = $this->calculateTotalConsumption();
+        }
     }
 
     public function calculate(): float
     {
-        return $this->totalConsumption * $this->carbonIntensity;
+        if ($this->project->carbon_intensity) {
+
+            return $this->project->carbon_intensity;
+        }
+
+        $carbonIntensity = $this->totalConsumption * $this->carbonIntensity;
+
+        $this->projectRepository->update($this->project->id, [
+            'carbon_intensity' => $carbonIntensity,
+        ]);
+
+        return $carbonIntensity;
     }
 
     public static function collection(Collection $collection): Collection
     {
         return $collection->map(function($project) {
             return [
-                'projectId' => $project->id,
+                'id' => $project->id,
                 'carbonIntensity' => app()
                     ->make(CarbonIntensityCalculator::class, ['project' => $project])
                     ->calculate(),

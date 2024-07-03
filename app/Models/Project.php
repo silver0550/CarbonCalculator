@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Carbon $end_date
  * @property int $start_odometer
  * @property int $end_odometer
+ * @property float $carbon_intensity
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
