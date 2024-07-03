@@ -31,9 +31,9 @@ class CarbonIntensityCalculator implements CalculableInterface
         }
     }
 
-    public function calculate(): float
+    public function calculate(bool $force = false): float
     {
-        if ($this->project->carbon_intensity) {
+        if ($this->project->carbon_intensity && !$force) {
 
             return $this->project->carbon_intensity;
         }

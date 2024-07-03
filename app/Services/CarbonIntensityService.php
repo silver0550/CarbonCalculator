@@ -28,13 +28,13 @@ class CarbonIntensityService
                 'startProject' => $project->start_date,
                 'endProject' => $project->end_date,
                 'runningPower' => 'Ezt még ki kell találni',
-                'carbonIntensity' => number_format($match['carbonIntensity'], 0, '', ' ')
+                'carbonIntensity' => number_format($match['carbonIntensity'], 2, '.', ' ')
             ];
         });
     }
 
     public function groupProjectsByYear(): Collection
     {
-
+//        TODO:ITT TARTOK
     }
 }

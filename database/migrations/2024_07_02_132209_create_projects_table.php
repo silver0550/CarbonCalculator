@@ -18,7 +18,7 @@ return new class extends Migration {
             $table->date('end_date');
             $table->unsignedInteger('start_odometer');
             $table->unsignedInteger('end_odometer');
-            $table->float('carbon_intensity')->nullable();
+            $table->unsignedDouble('carbon_intensity')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
