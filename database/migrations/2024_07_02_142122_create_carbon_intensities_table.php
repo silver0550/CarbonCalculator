@@ -10,14 +10,11 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('projects', function (Blueprint $table) {
+        Schema::create('carbon_intensities', function (Blueprint $table) {
             $table->id();
-            $table->string('licence_plate')->unique();
-            $table->foreignId('vehicle_id')->constrained();
-            $table->date('start_date');
-            $table->date('end_date');
-            $table->unsignedInteger('start_odometer');
-            $table->unsignedInteger('end_odometer');
+            $table->string('country');
+            $table->unsignedSmallInteger('year');
+            $table->unsignedSmallInteger('carbon_intensity');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -28,6 +25,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('projects');
+        Schema::dropIfExists('carbon_intensities');
     }
 };

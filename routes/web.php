@@ -1,9 +1,15 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Imports\EmproviaImport;
+use App\Imports\VehicleImport;
+use App\Models\Project;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Facades\Excel;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,14 +24,18 @@ use Inertia\Inertia;
 
 Route::get('/', function () {
 
-    dd(\App\Models\Vehicle::first()->fuel_type->getReadableText());
+//    Excel::import(new EmproviaImport(), 'C:\Users\Gacs\Projects\TesztProjects\emprovia\storage\app\public\mitigia_feladat1.xlsx');
 
-//    return Inertia::render('Welcome', [
-//        'canLogin' => Route::has('login'),
-//        'canRegister' => Route::has('register'),
-//        'laravelVersion' => Application::VERSION,
-//        'phpVersion' => PHP_VERSION,
-//    ]);
+    $exitCode = Artisan::call('excel:import', [
+        '--from' => 'C:\Users\Gacs\Projects\TesztProjects\emprovia\storage\app\public\mitigia_feladat1.xlsx',
+        '--sheets' => 'vehicle,project,carbon_intensity',
+        '--to' => 'VehicleImport,ProjectImport,CarbonIntensityImport',
+    ]);
+
+    dd($exitCode);
+
+
+
 });
 
 Route::get('/dashboard', function () {
