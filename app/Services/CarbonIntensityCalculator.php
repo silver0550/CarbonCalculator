@@ -37,7 +37,7 @@ class CarbonIntensityCalculator implements CalculableInterface
 
     public function calculate(bool $force = false): float
     {
-        if ($this->project->carbon_intensity && !$force) {
+        if (!is_null($this->project->carbon_intensity) && !$force) {
 
             return $this->project->carbon_intensity;
         }
@@ -86,5 +86,27 @@ class CarbonIntensityCalculator implements CalculableInterface
     private function calculateTotalConsumption(): float
     {
         return ($this->distanceTravelled / 100) * $this->energyConsumption;
+    }
+
+    //========================= GETTERS ==============================
+
+    public function getDistanceTravelled(): ?int
+    {
+        return $this->distanceTravelled ?? null;
+    }
+
+    public function getEnergyConsumption(): ?int
+    {
+        return $this->energyConsumption ?? null;
+    }
+
+    public function getTotalConsumption(): ?float
+    {
+        return $this->totalConsumption ?? null;
+    }
+
+    public function getCarbonIntensity(): ?int
+    {
+        return $this->carbonIntensity ?? null;
     }
 }

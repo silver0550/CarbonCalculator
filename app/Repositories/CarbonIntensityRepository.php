@@ -17,7 +17,7 @@ class CarbonIntensityRepository extends BaseRepository
             ->where('year', $year)
             ->where('country', 'Hungary')
             ->first()
-            ->carbon_intensity;
+            ?->carbon_intensity ?? 0;
     }
 
 

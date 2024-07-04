@@ -1,6 +1,6 @@
 <template>
     <div class="font-bold text-3xl text-center mt-4">
-        Karbon kibocsátás projektek szerint
+        Karbonkibocsátás projektek szerint
     </div>
     <div class="overflow-x-auto m-9">
         <div class="border border-base-300 rounded-xl overflow-hidden">
@@ -29,7 +29,7 @@
         </div>
     </div>
     <div class="font-bold text-3xl text-center mb-8">
-        Karbon kibocsátás éves lebontásban
+        Karbonkibocsátás éves lebontásban
     </div>
     <div class="flex w-4/5 mx-auto mb-9">
         <div class="flex-1 flex items-center ">
