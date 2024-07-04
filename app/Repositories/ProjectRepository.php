@@ -26,4 +26,11 @@ class ProjectRepository extends BaseRepository
             }
         ])->get();
     }
+
+    public function getGroupedByYears(): Collection
+    {
+        return Project::selectRaw('YEAR(end_date) as year, SUM(carbon_intensity) as totalCarbonIntensity')
+            ->groupByRaw('YEAR(end_date)')
+            ->get();
+    }
 }

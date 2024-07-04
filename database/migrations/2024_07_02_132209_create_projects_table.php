@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
-            $table->string('licence_plate')->unique();
+            $table->string('licence_plate');
             $table->foreignId('vehicle_id')->constrained();
             $table->date('start_date');
             $table->date('end_date');

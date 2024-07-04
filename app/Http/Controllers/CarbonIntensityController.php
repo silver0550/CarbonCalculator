@@ -16,10 +16,12 @@ class CarbonIntensityController extends Controller
 
     public function index(): Response
     {
-        $data = $this->carbonIntensityService->collectDataToReport()->toArray();
+        $projectReports = $this->carbonIntensityService->collectDataToReportFromAllProjects()->toArray();
+        $groupedProjectsByYear = $this->carbonIntensityService->groupProjectsByYear();
 
-        return Inertia::render('teszt', [
-            'data' => $data,
+        return Inertia::render('carbon_intensity_report', [
+            'report' => $projectReports,
+            'groupedProjects' => $groupedProjectsByYear,
         ]);
     }
 }

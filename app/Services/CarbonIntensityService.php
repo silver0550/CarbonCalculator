@@ -12,7 +12,7 @@ class CarbonIntensityService
     {
     }
 
-    public function collectDataToReport(): Collection
+    public function collectDataToReportFromAllProjects(): Collection
     {
         $projects = $this->projectRepository->getAllWithVehicles();
         $carbonIntensities = CarbonIntensityCalculator::collection($projects);
@@ -33,8 +33,13 @@ class CarbonIntensityService
         });
     }
 
-    public function groupProjectsByYear(): Collection
+    public function groupProjectsByYear(): array
     {
-//        TODO:ITT TARTOK
+        $return = $this->projectRepository
+            ->getGroupedByYears();
+        foreach ($return as $projects) {
+            $projects->totalCarbonIntensity = number_format($projects->totalCarbonIntensity, 2, '.', ' ');
+        }
+        return $return->toArray();
     }
 }

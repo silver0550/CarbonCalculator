@@ -7,7 +7,9 @@ use App\Models\Project;
 use App\Repositories\CarbonIntensityRepository;
 use App\Repositories\ProjectRepository;
 use Carbon\Carbon;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class CarbonIntensityCalculator implements CalculableInterface
 {
@@ -17,18 +19,20 @@ class CarbonIntensityCalculator implements CalculableInterface
     private int $carbonIntensity; //gC02eq/kWh
 
     public function __construct(
-        private readonly Project $project,
+        private Project                            $project,
         private readonly CarbonIntensityRepository $carbonIntensityRepository,
-        private readonly ProjectRepository $projectRepository,
+        private readonly ProjectRepository         $projectRepository,
     )
     {
-        if(is_null($this->project->carbon_intensity)){
-            $this->distanceTravelled = $this->project->distanceTravelled;
-            $this->energyConsumption = $this->project->vehicle->energyConsumption;
-            $this->carbonIntensity = $this->carbonIntensityRepository
-                ->getCarbonIntensityByYear(Carbon::parse($this->project->end_date)->year);
-            $this->totalConsumption = $this->calculateTotalConsumption();
-        }
+        $this->init();
+    }
+
+    public function setProject(Project $project): self
+    {
+        $this->project = $project;
+        $this->init();
+
+        return $this;
     }
 
     public function calculate(bool $force = false): float
@@ -47,16 +51,36 @@ class CarbonIntensityCalculator implements CalculableInterface
         return $carbonIntensity;
     }
 
-    public static function collection(Collection $collection): Collection
+    public static function collection(Collection $projects, bool $force = false): ?Collection
     {
-        return $collection->map(function($project) {
+        try {
+            $carbonIntensityCalculator = app()
+                ->make(CarbonIntensityCalculator::class, ['project' => $projects->first()]);
+        } catch (BindingResolutionException $e) {
+            Log::error($e->getMessage());
+
+            return null;
+        }
+
+        return $projects->map(function ($project) use ($force, &$carbonIntensityCalculator) {
             return [
                 'id' => $project->id,
-                'carbonIntensity' => app()
-                    ->make(CarbonIntensityCalculator::class, ['project' => $project])
-                    ->calculate(),
+                'carbonIntensity' => $carbonIntensityCalculator->setProject($project)
+                    ->calculate($force),
             ];
         });
+    }
+
+    private function init(): void
+    {
+        if (is_null($this->project->carbon_intensity)) {
+
+            $this->distanceTravelled = $this->project->distanceTravelled;
+            $this->energyConsumption = $this->project->vehicle->energyConsumption;
+            $this->carbonIntensity = $this->carbonIntensityRepository
+                ->getCarbonIntensityByYear(Carbon::parse($this->project->end_date)->year);
+            $this->totalConsumption = $this->calculateTotalConsumption();
+        }
     }
 
     private function calculateTotalConsumption(): float

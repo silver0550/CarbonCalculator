@@ -20,6 +20,9 @@ class ProjectImport implements ToModel, WithHeadingRow
 
         $existingProject = Project::query()
             ->where('licence_plate', $row['license_plate'])
+            ->where('vehicle_id', $row['v_id'])
+            ->where('start_odometer', $row['start_odo'])
+            ->where('end_odometer', $row['last_odo'])
             ->first();
 
         if ($existingProject) {
