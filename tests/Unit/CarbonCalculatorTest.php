@@ -2,11 +2,12 @@
 
 namespace Tests\Unit;
 
+use App\Models\CarbonIntensity;
 use App\Models\Project;
 use App\Models\Vehicle;
 use App\Services\CarbonIntensityCalculator;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 
 class CarbonCalculatorTest extends TestCase
@@ -14,7 +15,7 @@ class CarbonCalculatorTest extends TestCase
     use RefreshDatabase;
 
 
-    public function testDistanceIsRight(): void
+    public function testDistanceCalculateIsCorrect(): void
     {
         $project = Project::factory()->create(['carbon_intensity' => null]);
         $project->start_odometer = 100;
@@ -22,10 +23,10 @@ class CarbonCalculatorTest extends TestCase
 
         $calculator = app()->make(CarbonIntensityCalculator::class, ['project' => $project]);
 
-        $this->assertEquals($calculator->getDistanceTravelled(), 11);
+        $this->assertEquals(11, $calculator->getDistanceTravelled());
     }
 
-    public function testEnergyConsumptionIsRight(): void
+    public function testEnergyConsumptionCalculateIsCorrect(): void
     {
         $testData = [
             [
@@ -54,12 +55,13 @@ class CarbonCalculatorTest extends TestCase
             $result[$index] = $calculator->getEnergyConsumption();
         }
 
-        $this->assertEquals($result[0], 100);
-        $this->assertEquals($result[1], 100);
-        $this->assertEquals($result[2], 18);
+        $this->assertTrue(isset($result));
+        $this->assertEquals(100, $result[0]);
+        $this->assertEquals(100, $result[1]);
+        $this->assertEquals(18, $result[2]);
     }
 
-    public function testTotalEnergyConsumptionIsRight(): void
+    public function testTotalEnergyConsumptionCalculateIsCorrect(): void
     {
         $project = Project::factory()->create([          //distance = 10000 km
             'start_odometer' => 1,
@@ -72,9 +74,44 @@ class CarbonCalculatorTest extends TestCase
 
         $calculator = app()->make(CarbonIntensityCalculator::class, ['project' => $project]);
 
-        $this->assertEquals($calculator->getTotalConsumption(), 1800);
+        $this->assertEquals(1800, $calculator->getTotalConsumption());
     }
 
-    //carbon intensiti
-    // calculator
+    public function testCarbonIntensityIsCorrect(): void
+    {
+        $project = Project::factory()->create([
+            'end_date' => Carbon::parse('2023-01-01')
+        ]);
+
+        CarbonIntensity::factory()->create([
+            'year' => 2023,
+            'carbon_intensity' => 1000
+        ]);
+
+        $calculator = app()->make(CarbonIntensityCalculator::class, ['project' => $project]);
+
+        $this->assertEquals(1000, $calculator->getCarbonIntensity());
+    }
+
+    public function testCarbonIntensityCalculatorIsCorrect(): void
+    {
+        $project = Project::factory()->create([             //distance = 10000 km
+            'start_odometer' => 1,
+            'end_odometer' => 10001,
+            'end_date' => Carbon::parse('2023-01-01'),
+            'vehicle_id' => Vehicle::factory()->create([    //EnergyConsumption = 18
+                'wltp_energy_consumption' => null,
+                'nedc_energy_consumption' => null,
+            ])->id,
+        ]);
+
+        CarbonIntensity::factory()->create([
+            'year' => 2023,
+            'carbon_intensity' => 100
+        ]);
+
+        $calculator = app()->make(CarbonIntensityCalculator::class, ['project' => $project]);
+
+        $this->assertEquals(180000, $calculator->calculate());
+    }
 }

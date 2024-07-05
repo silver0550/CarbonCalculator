@@ -11,8 +11,8 @@
                     <th>Jármű megnevezése</th>
                     <th>Project Kezdete</th>
                     <th>Project Vége</th>
-                    <th>Menetteljesítmény</th>
-                    <th>CO2 kibocsájtás <br>(gCO2eq/kWh)</th>
+                    <th>Menetteljesítmény <br>(km)</th>
+                    <th>CO2 kibocsájtás <br>(gCO2eq)</th>
                 </tr>
                 </thead>
                 <tbody class="text-center">
@@ -39,7 +39,7 @@
                         <thead class="bg-base-300 border border-base-300">
                         <tr class="text-xl text-center">
                             <th>Év</th>
-                            <th>Teljes CO2 kibocsátás <br>(gCO2eq/kWh)</th>
+                            <th>Teljes CO2 kibocsátás <br>(gCO2eq)</th>
                         </tr>
                         </thead>
                         <tbody class="text-center">
