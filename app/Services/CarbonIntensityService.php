@@ -27,7 +27,7 @@ class CarbonIntensityService
                 'vehicleName' => $vehicleName,
                 'startProject' => $project->start_date,
                 'endProject' => $project->end_date,
-                'runningPower' => 'Ezt még ki kell találni',
+                'runningPower' => number_format($project->distanceTravelled,0, '', ' '),
                 'carbonIntensity' => number_format($match['carbonIntensity'], 2, '.', ' ')
             ];
         });

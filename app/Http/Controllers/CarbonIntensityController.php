@@ -2,8 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CarbonIntensity;
+use App\Models\Project;
+use App\Models\Vehicle;
+use App\Services\CarbonIntensityCalculator;
 use App\Services\CarbonIntensityService;
+use Database\Factories\CarbonIntensityFactory;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
