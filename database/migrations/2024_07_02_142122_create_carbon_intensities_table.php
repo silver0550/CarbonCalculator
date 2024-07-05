@@ -17,6 +17,8 @@ return new class extends Migration {
             $table->unsignedSmallInteger('carbon_intensity');
             $table->timestamps();
             $table->softDeletes();
+
+            $table->unique(['country', 'year']);
         });
     }
 

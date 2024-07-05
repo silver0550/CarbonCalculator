@@ -14,7 +14,14 @@ class CarbonIntensityService
 
     public function collectDataToReportFromAllProjects(): Collection
     {
-        $projects = $this->projectRepository->getAllWithVehicles();
+        $projects = $this->projectRepository->getAllWithVehicles([
+            'manufacturer',
+            'model',
+            'type',
+            'wltp_energy_consumption',
+            'nedc_energy_consumption',
+        ]);
+
         $carbonIntensities = CarbonIntensityCalculator::collection($projects);
 
         return $projects->map(function ($project) use ($carbonIntensities) {
@@ -40,6 +47,7 @@ class CarbonIntensityService
         foreach ($return as $projects) {
             $projects->totalCarbonIntensity = number_format($projects->totalCarbonIntensity, 2, '.', ' ');
         }
+
         return $return->toArray();
     }
 }

@@ -17,10 +17,11 @@ class ProjectRepository extends BaseRepository
         return $this->model::with([
             'vehicle' => function($query) use($only) {
                 if ($only) {
-                    $only = explode(',', implode(',', $only));
                     if (!in_array('id', $only)) {
+
                         $only[] = 'id';
                     }
+
                     $query->select($only);
                 }
             }
@@ -29,7 +30,8 @@ class ProjectRepository extends BaseRepository
 
     public function getGroupedByYears(): Collection
     {
-        return Project::selectRaw('YEAR(end_date) as year, SUM(carbon_intensity) as totalCarbonIntensity')
+        return Project::query()
+            ->selectRaw('YEAR(end_date) as year, SUM(carbon_intensity) as totalCarbonIntensity')
             ->groupByRaw('YEAR(end_date)')
             ->get();
     }
