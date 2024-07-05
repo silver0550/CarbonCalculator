@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Log;
 class CarbonIntensityCalculator implements CalculableInterface
 {
     private int $distanceTravelled; //km
-    private int $energyConsumption; //kWh/100km
+    private float $energyConsumption; //kWh/100km
     private float $totalConsumption; //kWh/100km
     private int $carbonIntensity; //gC02eq/kWh
 
@@ -75,9 +75,9 @@ class CarbonIntensityCalculator implements CalculableInterface
     {
         if (is_null($this->project->carbon_intensity)) {
 
-            $this->distanceTravelled = $this->project->distanceTravelled;
-            $this->energyConsumption = $this->project->vehicle->energyConsumption;
-            $this->carbonIntensity = $this->carbonIntensityRepository
+            $this->distanceTravelled = $this->project->distanceTravelled; // távolság
+            $this->energyConsumption = $this->project->vehicle->energyConsumption; // energia tpis
+            $this->carbonIntensity = $this->carbonIntensityRepository //260
                 ->getCarbonIntensityByYear(Carbon::parse($this->project->end_date)->year);
             $this->totalConsumption = $this->calculateTotalConsumption();
         }
